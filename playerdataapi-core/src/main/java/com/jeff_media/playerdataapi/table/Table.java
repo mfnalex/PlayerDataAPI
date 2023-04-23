@@ -31,9 +31,9 @@ public interface Table<T> {
         return delete(uuid.toString(), key);
     }
 
-    CompletableFuture<Boolean> createTableIfNotExists(int keyLength);
+    CompletableFuture<Void> createTableIfNotExists(int keyLength);
 
-    default CompletableFuture<Boolean> createTableIfNotExists() {
+    default CompletableFuture<Void> createTableIfNotExists() {
         return createTableIfNotExists(Const.DEFAULT_KEY_LENGTH);
     }
 

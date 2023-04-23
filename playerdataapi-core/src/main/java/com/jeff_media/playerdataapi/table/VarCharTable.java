@@ -1,6 +1,7 @@
 package com.jeff_media.playerdataapi.table;
 
 import com.jeff_media.playerdataapi.DataProvider;
+import com.jeff_media.playerdataapi.util.Const;
 
 import java.sql.Connection;
 import java.util.concurrent.CompletableFuture;
@@ -14,11 +15,16 @@ public class VarCharTable extends AbstractTable<String> {
     }
 
     @Override
-    public CompletableFuture<Boolean> createTableIfNotExists(int keyLength) {
+    public CompletableFuture<Void> createTableIfNotExists(int keyLength) {
+        return createTableIfNotExists(keyLength, Const.DEFAULT_VALUE_LENGTH);
+    }
+
+    public CompletableFuture<Void> createTableIfNotExists(int keyLength, int valueLength) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection con = getConnection()) {
-                var statement = con.prepareStatement("CREATE TABLE IF NOT EXISTS `" + getTableName() + "` (`uuid` VARCHAR(36), `key` VARCHAR(" + keyLength + "), `value` VARCHAR(255), PRIMARY KEY (`uuid`, `key`))");
-                return statement.execute();
+                var statement = con.prepareStatement("CREATE TABLE IF NOT EXISTS `" + getTableName() + "` (`uuid` VARCHAR(36), `key` VARCHAR(" + keyLength + "), `value` VARCHAR(" + valueLength + "), PRIMARY KEY (`uuid`, `key`))");
+                statement.execute();
+                return null;
             } catch (Exception e) {
                 throw new CompletionException(e);
             }

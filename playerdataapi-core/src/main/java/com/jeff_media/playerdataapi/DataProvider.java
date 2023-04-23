@@ -33,8 +33,16 @@ public class DataProvider {
     }
 
     public VarCharTable getOrCreateVarCharTable(String tableName) throws ExecutionException, InterruptedException {
+        return getOrCreateVarCharTable(tableName);
+    }
+
+    public VarCharTable getOrCreateVarCharTable(String tableName, int keyLength) throws ExecutionException, InterruptedException {
+        return getOrCreateVarCharTable(tableName, keyLength);
+    }
+
+    public VarCharTable getOrCreateVarCharTable(String tableName, int keyLength, int valueLength) throws ExecutionException, InterruptedException {
         VarCharTable table = new VarCharTable(this, tableName);
-        table.createTableIfNotExists().get();
+        table.createTableIfNotExists(keyLength, valueLength).get();
         return table;
     }
 
