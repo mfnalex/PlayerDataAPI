@@ -16,6 +16,7 @@
 ## Usage
 1. Depend on "PlayerDataAPI"
 2. Get the API through the Plugin Manager, and cast it to PlayerDataAPI
+3. See src/main/tests for details about usage
 
 ### Spigot
 ```java
