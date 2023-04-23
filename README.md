@@ -15,4 +15,4 @@
 
 ## Usage
 1. Depend on "PlayerDataAPI"
-2. Get the API through the Plugin Manager, and cast it to PlayerDataAPI
+2. Get the API through the Plugin Manager, and cast it to PlayerDataAPI. It works on both Bungeecord and Spigot
