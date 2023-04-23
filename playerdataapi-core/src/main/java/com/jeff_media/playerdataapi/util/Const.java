@@ -1,7 +1,9 @@
-package com.jeff_media.playerdataapi;
+package com.jeff_media.playerdataapi.util;
 
 public interface Const {
 
-    public static final int UUID_LENGTH = 36;
+    int UUID_LENGTH = 36;
+    int DEFAULT_KEY_LENGTH = 255;
+    int DEFAULT_VALUE_LENGTH = 255;
 
 }
