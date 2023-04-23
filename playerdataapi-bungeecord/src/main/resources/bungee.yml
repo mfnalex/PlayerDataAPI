@@ -1,0 +1,3 @@
+name: PlayerDataAPI
+version: '${project.version}'
+main: com.jeff_media.playerdataapi.bungeecord.BungeeCordPlayerDataAPI

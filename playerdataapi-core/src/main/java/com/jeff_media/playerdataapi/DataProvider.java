@@ -1,6 +1,7 @@
 package com.jeff_media.playerdataapi;
 
 import com.jeff_media.playerdataapi.table.VarCharTable;
+import com.jeff_media.playerdataapi.util.Const;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -26,6 +27,9 @@ public class DataProvider {
         config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
         config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
         ds = new HikariDataSource( config );
+        if(ds.isRunning()) {
+            System.out.println("HikariCP is running");
+        }
     }
 
     public Connection getConnection() throws SQLException {
@@ -33,11 +37,11 @@ public class DataProvider {
     }
 
     public VarCharTable getOrCreateVarCharTable(String tableName) throws ExecutionException, InterruptedException {
-        return getOrCreateVarCharTable(tableName);
+        return getOrCreateVarCharTable(tableName, Const.DEFAULT_KEY_LENGTH);
     }
 
     public VarCharTable getOrCreateVarCharTable(String tableName, int keyLength) throws ExecutionException, InterruptedException {
-        return getOrCreateVarCharTable(tableName, keyLength);
+        return getOrCreateVarCharTable(tableName, keyLength, Const.DEFAULT_VALUE_LENGTH);
     }
 
     public VarCharTable getOrCreateVarCharTable(String tableName, int keyLength, int valueLength) throws ExecutionException, InterruptedException {

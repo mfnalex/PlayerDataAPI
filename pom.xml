@@ -10,6 +10,9 @@
     <packaging>pom</packaging>
     <modules>
         <module>playerdataapi-core</module>
+        <module>playerdataapi-spigot</module>
+        <module>playerdataapi-bungeecord</module>
+        <module>playerdataapi-dist</module>
     </modules>
 
     <properties>
@@ -29,12 +32,6 @@
                 </configuration>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
     </build>
 
     <repositories>
@@ -47,5 +44,12 @@
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
     </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>jeff-media-public</id>
+            <url>https://repo.jeff-media.com/public</url>
+        </repository>
+    </distributionManagement>
 
 </project>
