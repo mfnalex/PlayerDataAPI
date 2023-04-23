@@ -2,6 +2,7 @@ package com.jeff_media.playerdataapi.bungeecord;
 
 import com.jeff_media.playerdataapi.DataProvider;
 import com.jeff_media.playerdataapi.PlayerDataAPI;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;

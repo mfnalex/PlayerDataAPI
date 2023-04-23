@@ -16,3 +16,15 @@
 ## Usage
 1. Depend on "PlayerDataAPI"
 2. Get the API through the Plugin Manager, and cast it to PlayerDataAPI
+
+### Spigot
+```java
+PlayerDataAPI playerDataAPI = (PlayerDataAPI) Bukkit.getPluginManager().getPlugin("PlayerDataAPI");
+DataProvider provider = playerDataAPI.getProvider();
+```
+
+### BungeeCord
+```java
+PlayerDataAPI playerDataApi = (PlayerDataAPI) ProxyServer.getInstance().getPluginManager().getPlugin("PlayerDataAPI");
+DataProvider provider = playerDataApi.getProvider();
+```
