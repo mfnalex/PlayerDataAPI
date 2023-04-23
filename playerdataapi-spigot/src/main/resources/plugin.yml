@@ -1,3 +1,4 @@
 name: PlayerDataAPI
 version: '${project.version}'
 main: com.jeff_media.playerdataapi.spigot.SpigotPlayerDataAPI
+api-version: "1.19"
