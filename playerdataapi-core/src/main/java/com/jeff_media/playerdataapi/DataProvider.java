@@ -15,21 +15,17 @@ public class DataProvider {
     private HikariDataSource ds;
 
     public DataProvider(String url, String username, String password) {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
         config.setJdbcUrl(url);
         config.setUsername(username);
         config.setPassword(password);
         config.addDataSourceProperty( "cachePrepStmts" , "true" );
         config.addDataSourceProperty( "prepStmtCacheSize" , "250" );
         config.addDataSourceProperty( "prepStmtCacheSqlLimit" , "2048" );
+        config.setPoolName("PlayerDataAPI");
         ds = new HikariDataSource( config );
-        if(ds.isRunning()) {
-            System.out.println("HikariCP is running");
-        }
+//        if(ds.isRunning()) {
+//            System.out.println("HikariCP is running");
+//        }
     }
 
     public Connection getConnection() throws SQLException {
