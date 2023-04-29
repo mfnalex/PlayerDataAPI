@@ -4,20 +4,24 @@ import com.jeff_media.playerdataapi.table.VarCharTable;
 import com.jeff_media.playerdataapi.util.Const;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPooled;
 import redis.clients.jedis.JedisPubSub;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class DataProvider {
+
+    private final String serverName;
+
+    public String getServerName() {
+        return serverName;
+    }
 
     private HikariConfig config = new HikariConfig();
     private final JedisPooled pool;
@@ -25,7 +29,9 @@ public class DataProvider {
     private static final String COLORS_KEY = "colors";
     private final VarCharTable colorsTable;
 
-    public DataProvider(String mysqlUrl, String mysqlUsername, String mysqlPassword, String redisHost, int redisPort) {
+    private final ExecutorService executor = Executors.newFixedThreadPool(4);
+
+    public DataProvider(String serverName, String mysqlUrl, String mysqlUsername, String mysqlPassword, String redisHost, int redisPort) {
         config.setJdbcUrl(mysqlUrl);
         config.setUsername(mysqlUsername);
         config.setPassword(mysqlPassword);
@@ -45,14 +51,26 @@ public class DataProvider {
         } catch (ExecutionException | InterruptedException ex) {
             throw new RuntimeException(ex);
         }
+
+        this.serverName = serverName;
+
+        executor.execute(() -> {
+            pool.subscribe(new RedisDebugPubSub(), "debug");
+            //System.out.println("Listening to incoming Redis messages on channel=debug");
+        });
+
+        executor.execute(() -> {
+            pool.publish("debug", "Server " + serverName + " started");
+        });
+
     }
 
     public void redisSubscribe(JedisPubSub jedisPubSub, String... channels) {
-        pool.subscribe(jedisPubSub, channels);
+        executor.execute(() -> pool.subscribe(jedisPubSub, channels));
     }
 
     public void redisPublish(String channel, String message) {
-        pool.publish(channel, message);
+        executor.execute(() -> pool.publish(channel, message));
     }
 
     public Connection getConnection() throws SQLException {

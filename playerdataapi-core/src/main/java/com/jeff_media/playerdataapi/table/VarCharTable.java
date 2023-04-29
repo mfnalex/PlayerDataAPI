@@ -34,7 +34,7 @@ public class VarCharTable extends AbstractTable<String> {
 
     @Override
     public CompletableFuture<String> get(UUIDKeyPair keyPair) {
-        return CompletableFuture.supplyAsync(() -> getCache().computeIfAbsent(keyPair, __ -> getFromSql(keyPair)));
+        return CompletableFuture.supplyAsync(() -> getFromSql(keyPair));
     }
 
     private String getFromSql(UUIDKeyPair keyPair) {
@@ -54,7 +54,6 @@ public class VarCharTable extends AbstractTable<String> {
 
     @Override
     public CompletableFuture<Void> set(UUIDKeyPair keyPair, String data) {
-        getCache().put(keyPair, data);
         return CompletableFuture.supplyAsync(() -> {
             try (var connection = getConnection()) {
                 var statement = connection.prepareStatement("INSERT INTO `" + getTableName() + "` (`uuid`, `key`, `value`) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE `value`=?");
@@ -72,9 +71,6 @@ public class VarCharTable extends AbstractTable<String> {
 
     @Override
     public CompletableFuture<Boolean> exists(UUIDKeyPair keyPair) {
-        if (getCache().containsKey(keyPair)) {
-            return CompletableFuture.completedFuture(true);
-        }
         return CompletableFuture.supplyAsync(() -> {
             try (var connection = getConnection()) {
                 var statement = connection.prepareStatement("SELECT `value` FROM `" + getTableName() + "` WHERE `uuid`=? AND `key`=?");
@@ -90,7 +86,6 @@ public class VarCharTable extends AbstractTable<String> {
 
     @Override
     public CompletableFuture<Void> delete(UUIDKeyPair keyPair) {
-        getCache().remove(keyPair);
         return CompletableFuture.supplyAsync(() -> {
             try (var connection = getConnection()) {
                 var statement = connection.prepareStatement("DELETE FROM `" + getTableName() + "` WHERE `uuid`=? AND `key`=?");

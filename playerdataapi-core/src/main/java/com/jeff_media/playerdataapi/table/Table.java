@@ -79,6 +79,6 @@ public interface Table<T> {
         return CompletableFuture.completedFuture(null);
     }
 
-    Map<UUIDKeyPair, T> getCache();
+    //Map<UUIDKeyPair, T> getCache();
 
 }

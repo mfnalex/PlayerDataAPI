@@ -38,7 +38,7 @@ public class BungeeCordPlayerDataAPI extends Plugin implements PlayerDataAPI {
 
         String jdbcUrl = "jdbc:mysql://" + mysqlHost + ":" + mysqlPort + "/" + mysqlDatabase;
 
-        provider = new DataProvider(jdbcUrl, mysqlUser, mysqlPassword, redisHost, redisPort);
+        provider = new DataProvider(getConfig().getString("servername"), jdbcUrl, mysqlUser, mysqlPassword, redisHost, redisPort);
 
     }
 

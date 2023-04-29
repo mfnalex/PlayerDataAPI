@@ -13,12 +13,12 @@ public abstract class AbstractTable<T> implements Table<T> {
     private final DataProvider provider;
     private final String tableName;
 
-    private final Map<UUIDKeyPair, T> cache;
+    //private final Map<UUIDKeyPair, T> cache;
 
     public AbstractTable(DataProvider provider, String tableName) {
         this.provider = provider;
         this.tableName = tableName;
-        this.cache = new HashMap<>();
+        //this.cache = new HashMap<>();
     }
 
     @Override
@@ -44,8 +44,8 @@ public abstract class AbstractTable<T> implements Table<T> {
         return provider;
     }
 
-    @Override
-    public Map<UUIDKeyPair, T> getCache() {
-        return cache;
-    }
+//    @Override
+//    public Map<UUIDKeyPair, T> getCache() {
+//        return cache;
+//    }
 }
