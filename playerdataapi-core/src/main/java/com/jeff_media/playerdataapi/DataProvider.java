@@ -7,12 +7,19 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 public class DataProvider {
 
     private HikariConfig config = new HikariConfig();
     private HikariDataSource ds;
+    private static final String COLORS_KEY = "colors";
+    private final VarCharTable colorsTable;
 
     public DataProvider(String url, String username, String password) {
         config.setJdbcUrl(url);
@@ -26,6 +33,12 @@ public class DataProvider {
 //        if(ds.isRunning()) {
 //            System.out.println("HikariCP is running");
 //        }
+
+        try {
+            this.colorsTable = getOrCreateVarCharTable("chatcolors");
+        } catch (ExecutionException | InterruptedException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     public Connection getConnection() throws SQLException {
@@ -46,4 +59,12 @@ public class DataProvider {
         return table;
     }
 
+    public CompletableFuture<Void> setChatColors(UUID uuid, String... hexs) {
+        String colors = String.join(",", hexs);
+        return colorsTable.set(uuid, COLORS_KEY, colors);
+    }
+
+    public CompletableFuture<String> getChatColors(UUID uuid) {
+        return colorsTable.get(uuid, COLORS_KEY);
+    }
 }
