@@ -22,7 +22,7 @@ public class SpigotPlayerDataAPI extends JavaPlugin implements PlayerDataAPI {
 
         String jdbcUrl = "jdbc:mysql://" + host + ":" + port + "/" + dataBase;
 
-        provider = new DataProvider(jdbcUrl, user, password);
+        provider = new DataProvider(jdbcUrl, user, password, "localhost", 6379);
 
     }
 

@@ -2,6 +2,7 @@ package com.jeff_media.playerdataapi.table;
 
 import com.jeff_media.playerdataapi.DataProvider;
 import com.jeff_media.playerdataapi.util.Const;
+import com.jeff_media.playerdataapi.util.UUIDKeyPair;
 
 import java.sql.Connection;
 import java.util.concurrent.CompletableFuture;
@@ -32,30 +33,33 @@ public class VarCharTable extends AbstractTable<String> {
     }
 
     @Override
-    public CompletableFuture<String> get(String uuid, String key) {
-        return CompletableFuture.supplyAsync(() -> {
-            try (var connection = getConnection()) {
-                var statement = connection.prepareStatement("SELECT `value` FROM `" + getTableName() + "` WHERE `uuid`=? AND `key`=?");
-                statement.setString(1, uuid);
-                statement.setString(2, key);
-                var resultSet = statement.executeQuery();
-                if (resultSet.next()) {
-                    return resultSet.getString("value");
-                }
-            } catch (Exception e) {
-                throw new CompletionException(e);
+    public CompletableFuture<String> get(UUIDKeyPair keyPair) {
+        return CompletableFuture.supplyAsync(() -> getCache().computeIfAbsent(keyPair, __ -> getFromSql(keyPair)));
+    }
+
+    private String getFromSql(UUIDKeyPair keyPair) {
+        try (var connection = getConnection()) {
+            var statement = connection.prepareStatement("SELECT `value` FROM `" + getTableName() + "` WHERE `uuid`=? AND `key`=?");
+            statement.setString(1, keyPair.uuid());
+            statement.setString(2, keyPair.key());
+            var resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getString("value");
             }
-            return null;
-        });
+        } catch (Exception e) {
+            throw new CompletionException(e);
+        }
+        return null;
     }
 
     @Override
-    public CompletableFuture<Void> set(String uuid, String key, String data) {
+    public CompletableFuture<Void> set(UUIDKeyPair keyPair, String data) {
+        getCache().put(keyPair, data);
         return CompletableFuture.supplyAsync(() -> {
             try (var connection = getConnection()) {
                 var statement = connection.prepareStatement("INSERT INTO `" + getTableName() + "` (`uuid`, `key`, `value`) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE `value`=?");
-                statement.setString(1, uuid);
-                statement.setString(2, key);
+                statement.setString(1, keyPair.uuid());
+                statement.setString(2, keyPair.key());
                 statement.setString(3, data);
                 statement.setString(4, data);
                 statement.execute();
@@ -67,12 +71,15 @@ public class VarCharTable extends AbstractTable<String> {
     }
 
     @Override
-    public CompletableFuture<Boolean> exists(String uuid, String key) {
+    public CompletableFuture<Boolean> exists(UUIDKeyPair keyPair) {
+        if (getCache().containsKey(keyPair)) {
+            return CompletableFuture.completedFuture(true);
+        }
         return CompletableFuture.supplyAsync(() -> {
             try (var connection = getConnection()) {
                 var statement = connection.prepareStatement("SELECT `value` FROM `" + getTableName() + "` WHERE `uuid`=? AND `key`=?");
-                statement.setString(1, uuid);
-                statement.setString(2, key);
+                statement.setString(1, keyPair.uuid());
+                statement.setString(2, keyPair.key());
                 var resultSet = statement.executeQuery();
                 return resultSet.next();
             } catch (Exception e) {
@@ -82,12 +89,13 @@ public class VarCharTable extends AbstractTable<String> {
     }
 
     @Override
-    public CompletableFuture<Void> delete(String uuid, String key) {
+    public CompletableFuture<Void> delete(UUIDKeyPair keyPair) {
+        getCache().remove(keyPair);
         return CompletableFuture.supplyAsync(() -> {
             try (var connection = getConnection()) {
                 var statement = connection.prepareStatement("DELETE FROM `" + getTableName() + "` WHERE `uuid`=? AND `key`=?");
-                statement.setString(1, uuid);
-                statement.setString(2, key);
+                statement.setString(1, keyPair.uuid());
+                statement.setString(2, keyPair.key());
                 statement.execute();
                 return null;
             } catch (Exception e) {

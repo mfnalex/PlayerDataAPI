@@ -1,0 +1,10 @@
+mysql:
+  host: localhost
+  port: 3306
+  database: test
+  user: test
+  password: test
+
+redis:
+  host: localhost
+  port: 6379

@@ -1,10 +1,8 @@
 package com.jeff_media.playerdataapi;
 
-import com.jeff_media.playerdataapi.DataProvider;
-
 public class UnitTest {
 
-    DataProvider provider = new DataProvider("jdbc:mysql://localhost:3306/minecrafttest", "minecrafttest","minecrafttest");
+    DataProvider provider = new DataProvider("jdbc:mysql://127.0.0.1:3306/test", "test","test", "localhost", 6379);
 
     public DataProvider getProvider() {
         return provider;

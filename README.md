@@ -29,3 +29,9 @@ DataProvider provider = playerDataAPI.getProvider();
 PlayerDataAPI playerDataApi = (PlayerDataAPI) ProxyServer.getInstance().getPluginManager().getPlugin("PlayerDataAPI");
 DataProvider provider = playerDataApi.getProvider();
 ```
+
+# MySQL & Redis configuration
+For the unit tests, you can just spin up a MySQL and Redis server on localhost. The unit tests will automatically use the default ports and default credentials.
+```docker
+docker run -p 3306:3306 -e MARIADB_PASSWORD=test -e MARIADB_USER=test -e MARIADB_DATABASE=test -e MARIADB_RANDOM_ROOT_PASSWORD=y -d mariadb:latest
+```

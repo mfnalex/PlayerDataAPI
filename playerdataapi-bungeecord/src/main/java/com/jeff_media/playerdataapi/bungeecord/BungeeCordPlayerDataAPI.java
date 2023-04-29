@@ -27,15 +27,18 @@ public class BungeeCordPlayerDataAPI extends Plugin implements PlayerDataAPI {
 
         config = loadConfig("config.yml");
 
-        String dataBase = getConfig().getString("database", "minecrafttest");
-        int port = getConfig().getInt("port", 3306);
-        String host = getConfig().getString("host", "localhost");
-        String user = getConfig().getString("user", "minecrafttest");
-        String password = getConfig().getString("password", "minecrafttest");
+        String mysqlDatabase = getConfig().getString("mysql.database", "test");
+        int mysqlPort = getConfig().getInt("mysql.port", 3306);
+        String mysqlHost = getConfig().getString("mysql.host", "localhost");
+        String mysqlUser = getConfig().getString("mysql.user", "test");
+        String mysqlPassword = getConfig().getString("mysql.password", "test");
 
-        String jdbcUrl = "jdbc:mysql://" + host + ":" + port + "/" + dataBase;
+        String redisHost = getConfig().getString("redis.host", "localhost");
+        int redisPort = getConfig().getInt("redis.port", 6379);
 
-        provider = new DataProvider(jdbcUrl, user, password);
+        String jdbcUrl = "jdbc:mysql://" + mysqlHost + ":" + mysqlPort + "/" + mysqlDatabase;
+
+        provider = new DataProvider(jdbcUrl, mysqlUser, mysqlPassword, redisHost, redisPort);
 
     }
 
