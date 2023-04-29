@@ -19,6 +19,7 @@ public class DataProvider {
     private HikariConfig config = new HikariConfig();
     private HikariDataSource ds;
     private static final String COLORS_KEY = "colors";
+    private final VarCharTable colorsTable;
 
     public DataProvider(String url, String username, String password) {
         config.setJdbcUrl(url);
@@ -32,6 +33,12 @@ public class DataProvider {
 //        if(ds.isRunning()) {
 //            System.out.println("HikariCP is running");
 //        }
+
+        try {
+            this.colorsTable = getOrCreateVarCharTable("chatcolors");
+        } catch (ExecutionException | InterruptedException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     public Connection getConnection() throws SQLException {
@@ -52,22 +59,12 @@ public class DataProvider {
         return table;
     }
 
-    public void setChatColors(UUID uuid, String... hexs) {
-        try {
-            VarCharTable charTable = getOrCreateVarCharTable("chatcolors");
-            String colors = String.join(",", hexs);
-            charTable.set(uuid, COLORS_KEY, colors);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public CompletableFuture<Void> setChatColors(UUID uuid, String... hexs) {
+        String colors = String.join(",", hexs);
+        return colorsTable.set(uuid, COLORS_KEY, colors);
     }
 
     public CompletableFuture<String> getChatColors(UUID uuid) {
-        try {
-            VarCharTable charTable = getOrCreateVarCharTable("chatcolors");
-            return charTable.get(uuid, COLORS_KEY);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        return colorsTable.get(uuid, COLORS_KEY);
     }
 }
