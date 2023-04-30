@@ -2,6 +2,8 @@ package com.jeff_media.playerdataapi.bungeecord;
 
 import com.jeff_media.playerdataapi.DataProvider;
 import com.jeff_media.playerdataapi.PlayerDataAPI;
+import com.jeff_media.playerdataapi.events.GlobalEventListener;
+import com.jeff_media.playerdataapi.events.GlobalEventManager;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -17,6 +19,7 @@ public class BungeeCordPlayerDataAPI extends Plugin implements PlayerDataAPI {
     private static ConfigurationProvider yamlConfigurationProvider = ConfigurationProvider.getProvider(YamlConfiguration.class);
     private DataProvider provider;
     private Configuration config;
+    private GlobalEventManager globalEventManager = new GlobalEventManager(this);
 
     public Configuration getConfig() {
         return config;
@@ -40,11 +43,20 @@ public class BungeeCordPlayerDataAPI extends Plugin implements PlayerDataAPI {
 
         provider = new DataProvider(getConfig().getString("servername"), jdbcUrl, mysqlUser, mysqlPassword, redisHost, redisPort);
 
+        getProxy().getPluginManager().registerListener(this, new EventListener(this));
+
+        getProvider().redisSubscribe(new GlobalEventListener(this), "global-events");
+
     }
 
     @Override
     public DataProvider getProvider() {
         return Objects.requireNonNull(provider);
+    }
+
+    @Override
+    public GlobalEventManager getGlobalEventManager() {
+        return globalEventManager;
     }
 
     private Configuration saveDefaultConfig(File file, String fileName) {

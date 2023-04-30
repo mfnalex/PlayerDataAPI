@@ -6,9 +6,9 @@
   <url>https://repo.jeff-media.com/public</url>
 </repository>
 <dependency>
-  <groupId>com.jeff_media.playerdatapi</groupId>
+  <groupId>com.jeff_media.playerdataapi</groupId>
   <artifactId>playerdataapi-dist</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1</version>
   <scope>provided</scope>
 </dependency>
 ```

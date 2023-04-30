@@ -2,14 +2,15 @@ package com.jeff_media.playerdataapi.spigot;
 
 import com.jeff_media.playerdataapi.DataProvider;
 import com.jeff_media.playerdataapi.PlayerDataAPI;
-import org.bukkit.Bukkit;
+import com.jeff_media.playerdataapi.events.GlobalEventManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
 
 public class SpigotPlayerDataAPI extends JavaPlugin implements PlayerDataAPI {
 
-    DataProvider provider;
+    private DataProvider provider;
+    private final GlobalEventManager globalEventManager = new GlobalEventManager(this);
 
     @Override
     public void onEnable() {
@@ -23,11 +24,15 @@ public class SpigotPlayerDataAPI extends JavaPlugin implements PlayerDataAPI {
         String jdbcUrl = "jdbc:mysql://" + host + ":" + port + "/" + dataBase;
 
         provider = new DataProvider(getConfig().getString("servername"),jdbcUrl, user, password, getConfig().getString("redis.host"), getConfig().getInt("redis.port"));
-
     }
 
     @Override
     public DataProvider getProvider() {
         return Objects.requireNonNull(provider);
+    }
+
+    @Override
+    public GlobalEventManager getGlobalEventManager() {
+        return globalEventManager;
     }
 }
